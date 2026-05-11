@@ -388,7 +388,7 @@ export default function BlackjackTrainer() {
                 </div>
               )}
               {bet > 0 && (
-                <div className="mt-3">
+                <div className="hidden sm:block mt-3">
                   <BetChips bet={phase === 'over' ? lastBet : bet} result={resultVisible ? result : null} netProfit={lastNetProfit} chipPhase={chipPhase} betKey={betKey} />
                 </div>
               )}

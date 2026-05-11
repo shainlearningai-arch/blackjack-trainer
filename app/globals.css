@@ -11,6 +11,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ─── Dealer hand auto-shrink on mobile ────────────────────────── */
+@media (max-width: 640px) {
+  .dealer-hand-cards[data-count="4"] { zoom: 0.90; }
+  .dealer-hand-cards[data-count="5"] { zoom: 0.73; }
+  .dealer-hand-cards[data-count="6"] { zoom: 0.60; }
+  .dealer-hand-cards[data-count="7"] { zoom: 0.52; }
+  .dealer-hand-cards[data-count="8"] { zoom: 0.45; }
+}
+
 /* Hide number input spinners */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }

@@ -22,7 +22,10 @@ export default function Hand({ hand, label, active = false, isDealer = false }) 
       {label && (
         <div className="text-gray-300 text-xs font-semibold uppercase tracking-widest">{label}</div>
       )}
-      <div className="flex gap-2 flex-wrap justify-center">
+      <div
+        className={`flex gap-2 justify-center ${isDealer ? 'flex-nowrap dealer-hand-cards' : 'flex-wrap'}`}
+        data-count={isDealer ? hand.length : undefined}
+      >
         {hand.map((card, i) => (
           <Card key={card.id ?? `${i}-${card.rank}-${card.suit}`} card={card} dealIndex={i} />
         ))}

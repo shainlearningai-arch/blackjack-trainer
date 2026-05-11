@@ -3,12 +3,13 @@ import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useBlackjack } from '@/lib/useBlackjack';
 import { decksRemaining } from '@/lib/blackjack';
 import Hand from '@/components/Hand';
+import Card from '@/components/Card';
 import ActionButtons from '@/components/ActionButtons';
 import Chip from '@/components/Chip';
 import CountDisplay from '@/components/CountDisplay';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import BasicStrategyChart from '@/components/BasicStrategyChart';
-import InsurancePrompt from '@/components/InsurancePrompt';
+import { getInsuranceAdvice } from '@/lib/basicStrategy';
 
 function decompose(amount) {
   const denoms = [100, 50, 25, 10, 5];
@@ -48,7 +49,7 @@ function ChipRow({ chips, size = 40, entryClass = '', winClass = '', stagger = 7
   );
 }
 
-function BetChips({ bet, result, chipPhase, betKey }) {
+function BetChips({ bet, result, netProfit = 0, chipPhase, betKey }) {
   const betChips = useMemo(() => decompose(bet), [bet]);
   const doubled     = chipPhase === 'doubled';
   const surrendered = chipPhase === 'surrendered';
@@ -56,8 +57,13 @@ function BetChips({ bet, result, chipPhase, betKey }) {
   const isLose = result === 'lose' || result === 'bust';
 
   const payoutAmt = result === 'blackjack' ? Math.floor(bet * 1.5)
-    : result === 'win' ? (doubled ? bet * 2 : bet) : 0;
+    : result === 'win' ? netProfit : 0;
   const payoutChips = useMemo(() => payoutAmt > 0 ? decompose(payoutAmt) : [], [payoutAmt]);
+
+  const displayAmt = result === 'blackjack' ? Math.floor(bet * 1.5)
+    : isWin ? netProfit
+    : isLose ? Math.abs(netProfit)
+    : doubled ? bet * 2 : bet;
 
   return (
     <div className="flex flex-col items-center gap-1.5">
@@ -86,7 +92,7 @@ function BetChips({ bet, result, chipPhase, betKey }) {
       <span className={`text-xs font-black tabular-nums ${
         surrendered ? 'text-gray-500' : isWin ? 'text-yellow-300' : isLose ? 'text-red-400/60' : 'text-yellow-400'
       }`}>
-        {surrendered ? `$${bet} (½ back)` : isWin ? `+$${payoutAmt}` : isLose ? `-$${bet}` : `$${doubled ? bet * 2 : bet}`}
+        {surrendered ? `$${Math.floor(bet / 2)} back` : isWin ? `+$${displayAmt}` : isLose ? `-$${displayAmt}` : `$${displayAmt}`}
       </span>
     </div>
   );
@@ -131,16 +137,20 @@ export default function BlackjackTrainer() {
   const {
     shoe, runningCount, trueCount,
     phase, playerHands, activeHandIndex, dealerHand,
-    bet, bankroll, result, lastMistakes, lastCardCountHints,
+    bet, lastBet, lastNetProfit, bankroll, result, lastMistakes, lastCardCountHints,
     stats, canDouble, canSurrender, canSplit,
     playerHadBlackjack, insuranceTook, insuranceResult, insuranceMistake,
     setBet, deal, playerAction, dealerPlay, reset, insuranceAction, revealHole,
   } = useBlackjack();
 
-  const [betKey,    setBetKey]    = useState(0);
-  const [chipPhase, setChipPhase] = useState('idle');
-  const [flashKey,  setFlashKey]  = useState(null);
-  const [betInput,  setBetInput]  = useState('10');
+  const [betKey,        setBetKey]        = useState(0);
+  const [chipPhase,     setChipPhase]     = useState('idle');
+  const [flashKey,      setFlashKey]      = useState(null);
+  const [betInput,      setBetInput]      = useState('10');
+  const [resultVisible,       setResultVisible]       = useState(false);
+  const [showInsurancePrompt, setShowInsurancePrompt] = useState(false);
+  const [insuranceReturning,  setInsuranceReturning]  = useState(false);
+  const dealerPlayedRef = useRef(false);
 
   const prevBet = useRef(bet);
   useEffect(() => {
@@ -155,16 +165,47 @@ export default function BlackjackTrainer() {
     setBetKey(k => k + 1);
   }, [stats.hands]);
 
+  // Insurance popup — appears 1.35s after ace settles (after rotation completes)
   useEffect(() => {
-    if (phase === 'over' && result && result !== 'push' && result !== 'surrender') {
-      setFlashKey(`${stats.hands}-${result}`);
+    if (phase === 'insurance') {
+      setShowInsurancePrompt(false);
+      setInsuranceReturning(false);
+      const t = setTimeout(() => setShowInsurancePrompt(true), 1350);
+      return () => clearTimeout(t);
+    } else {
+      setShowInsurancePrompt(false);
+      setInsuranceReturning(false);
+    }
+  }, [phase]);
+
+  // Track whether the dealer phase ran (to delay result reveal)
+  useEffect(() => {
+    if (phase === 'dealer') dealerPlayedRef.current = true;
+    if (phase === 'betting') dealerPlayedRef.current = false;
+  }, [phase]);
+
+  // Reveal result — immediate for busts/surrenders/BJ, delayed after dealer play
+  useEffect(() => {
+    if (phase === 'over') {
+      const delay = dealerPlayedRef.current ? 700 : 0;
+      const t = setTimeout(() => {
+        setResultVisible(true);
+        if (result && result !== 'push' && result !== 'surrender') {
+          setFlashKey(`${stats.hands}-${result}`);
+        }
+      }, delay);
+      return () => clearTimeout(t);
+    } else {
+      setResultVisible(false);
     }
   }, [phase, result, stats.hands]);
 
   const dealerVisibleCount = dealerHand.filter(c => !c.faceDown).length;
   useEffect(() => {
     if (phase === 'dealer') {
-      const t = setTimeout(dealerPlay, 700);
+      const jitter = Math.floor(Math.random() * 500) - 200; // -200…+300 ms natural variation
+      const delay = Math.max(480, (dealerVisibleCount === 1 ? 1100 : 800) + jitter);
+      const t = setTimeout(dealerPlay, delay);
       return () => clearTimeout(t);
     }
   }, [phase, dealerPlay, dealerVisibleCount]);
@@ -203,6 +244,11 @@ export default function BlackjackTrainer() {
     playerAction(move);
   }, [playerAction]);
 
+  const handleInsuranceDecision = useCallback((take) => {
+    setInsuranceReturning(true);
+    setTimeout(() => insuranceAction(take), 700);
+  }, [insuranceAction]);
+
   // ── Keyboard shortcuts ───────────────────────────────────────────
   useEffect(() => {
     const onKey = (e) => {
@@ -211,7 +257,7 @@ export default function BlackjackTrainer() {
 
       if (phase === 'player') {
         if (k === 'h') { e.preventDefault(); handlePlayerAction('H'); }
-        if (k === 's') { e.preventDefault(); handlePlayerAction('S'); }
+        if (k === 's' || k === ' ') { e.preventDefault(); handlePlayerAction('S'); }
         if (k === 'd' && canDouble)    { e.preventDefault(); handlePlayerAction('D'); }
         if (k === 'p' && canSplit)     { e.preventDefault(); handlePlayerAction('P'); }
         if (k === 'r' && canSurrender) { e.preventDefault(); handlePlayerAction('R'); }
@@ -220,14 +266,14 @@ export default function BlackjackTrainer() {
         e.preventDefault();
         deal();
       }
-      if (phase === 'insurance') {
-        if (k === 'y') { e.preventDefault(); insuranceAction(true); }
-        if (k === 'n') { e.preventDefault(); insuranceAction(false); }
+      if (phase === 'insurance' && !insuranceReturning) {
+        if (k === 'y') { e.preventDefault(); handleInsuranceDecision(true); }
+        if (k === 'n' || k === ' ') { e.preventDefault(); handleInsuranceDecision(false); }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [phase, canDouble, canSplit, canSurrender, handlePlayerAction, deal, insuranceAction, bankroll, bet]);
+  }, [phase, insuranceReturning, canDouble, canSplit, canSurrender, handlePlayerAction, deal, handleInsuranceDecision, bankroll, bet]);
 
   const decksLeft      = decksRemaining(shoe);
   const cardsDealt     = dealerHand.length > 0;
@@ -281,20 +327,32 @@ export default function BlackjackTrainer() {
               />
             )}
 
-            {isBJ && <BlackjackCelebration bet={bet} />}
+            {isBJ && <BlackjackCelebration bet={lastBet} />}
 
             {/* Dealer zone */}
             <div className="flex-1 flex flex-col items-center justify-center py-3 px-4 border-b border-green-900/60">
               <div className="text-green-600 text-xs font-semibold uppercase tracking-widest mb-2">Dealer</div>
               {cardsDealt ? (
-                <Hand hand={dealerHand} />
+                phase === 'insurance' ? (
+                  <InsuranceDealerHand ace={dealerHand[0]} hole={dealerHand[1]} returning={insuranceReturning} />
+                ) : (
+                  <Hand hand={dealerHand} isDealer />
+                )
               ) : (
                 <div className="flex gap-2 opacity-20">
                   {[0,1].map(i => <div key={i} className="rounded-xl border-2 border-green-700 bg-green-900/40" style={{ width:84, height:126 }} />)}
                 </div>
               )}
-              {phase === 'over' && result && !isBJ && (
-                <FeltResult result={result} bet={bet} />
+              {phase === 'over' && resultVisible && result && !isBJ && (
+                <FeltResult result={result} bet={lastBet} netProfit={lastNetProfit} />
+              )}
+              {phase === 'insurance' && showInsurancePrompt && !insuranceReturning && (
+                <InsurancePopup
+                  bet={bet}
+                  trueCount={trueCount}
+                  onDecision={handleInsuranceDecision}
+                  playerHasBJ={playerHadBlackjack}
+                />
               )}
             </div>
 
@@ -319,7 +377,7 @@ export default function BlackjackTrainer() {
               )}
               {bet > 0 && (
                 <div className="mt-3">
-                  <BetChips bet={bet} result={result} chipPhase={chipPhase} betKey={betKey} />
+                  <BetChips bet={phase === 'over' ? lastBet : bet} result={resultVisible ? result : null} netProfit={lastNetProfit} chipPhase={chipPhase} betKey={betKey} />
                 </div>
               )}
             </div>
@@ -370,14 +428,10 @@ export default function BlackjackTrainer() {
               </div>
             )}
 
-            {/* Insurance */}
             {phase === 'insurance' && (
-              <InsurancePrompt
-                bet={bet}
-                trueCount={trueCount}
-                onDecision={insuranceAction}
-                playerHasBJ={playerHadBlackjack}
-              />
+              <div className="flex items-center justify-center gap-2 py-1.5 text-gray-500 text-xs">
+                <span className="animate-pulse">Dealer insurance offer — answer on the table</span>
+              </div>
             )}
 
             {phase === 'dealer' && (
@@ -401,30 +455,18 @@ export default function BlackjackTrainer() {
                 Max <span className="text-yellow-600 font-semibold">$500</span>
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleSetBet(bet - 5)}
-                disabled={bet <= MIN_BET || phase !== 'betting' && phase !== 'over'}
-                className="w-9 h-10 rounded-lg bg-gray-800 border border-gray-700 text-white font-bold text-lg hover:bg-gray-700 active:scale-90 transition-all disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0"
-              >−</button>
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xl select-none">$</span>
-                <input
-                  type="number"
-                  value={betInput}
-                  onChange={e => handleBetInput(e.target.value)}
-                  onBlur={() => setBetInput(String(bet))}
-                  min={MIN_BET}
-                  max={Math.min(MAX_BET, bankroll)}
-                  disabled={phase !== 'betting' && phase !== 'over'}
-                  className="w-full h-10 pl-9 pr-3 rounded-lg bg-gray-800 border border-gray-600 text-white font-black text-xl text-right focus:outline-none focus:border-yellow-500 tabular-nums disabled:opacity-40"
-                />
-              </div>
-              <button
-                onClick={() => handleSetBet(bet + 5)}
-                disabled={bet >= Math.min(MAX_BET, bankroll) || phase !== 'betting' && phase !== 'over'}
-                className="w-9 h-10 rounded-lg bg-gray-800 border border-gray-700 text-white font-bold text-lg hover:bg-gray-700 active:scale-90 transition-all disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0"
-              >+</button>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xl select-none">$</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={betInput}
+                onChange={e => handleBetInput(e.target.value)}
+                onBlur={() => setBetInput(String(bet))}
+                disabled={phase !== 'betting' && phase !== 'over'}
+                className="w-full h-10 pl-9 pr-3 rounded-lg bg-gray-800 border border-gray-600 text-white font-black text-xl text-right focus:outline-none focus:border-yellow-500 tabular-nums disabled:opacity-40"
+              />
             </div>
           </div>
 
@@ -452,21 +494,26 @@ export default function BlackjackTrainer() {
 
 // ── Result on the felt (near dealer hand) ────────────────────────
 const FELT_META = {
-  win:       { label: 'You Win!',    cls: 'text-emerald-200 bg-emerald-950/90 border-emerald-400', payout: b => `+$${b}` },
-  push:      { label: 'Push',        cls: 'text-gray-200   bg-gray-800/90    border-gray-500',     payout: null },
-  lose:      { label: 'Dealer Wins', cls: 'text-red-200    bg-red-950/90     border-red-500',      payout: b => `-$${b}` },
-  bust:      { label: 'Bust!',       cls: 'text-red-200    bg-red-950/90     border-red-500',      payout: b => `-$${b}` },
-  surrender: { label: 'Surrendered', cls: 'text-blue-200   bg-blue-950/90    border-blue-500',     payout: b => `+$${Math.floor(b/2)} back` },
+  win:       { label: 'You Win!',    cls: 'text-emerald-200 bg-emerald-950/90 border-emerald-400' },
+  push:      { label: 'Push',        cls: 'text-gray-200   bg-gray-800/90    border-gray-500'     },
+  lose:      { label: 'Dealer Wins', cls: 'text-red-200    bg-red-950/90     border-red-500'      },
+  bust:      { label: 'Bust!',       cls: 'text-red-200    bg-red-950/90     border-red-500'      },
+  surrender: { label: 'Surrendered', cls: 'text-blue-200   bg-blue-950/90    border-blue-500'     },
 };
 
-function FeltResult({ result, bet }) {
+function FeltResult({ result, bet, netProfit }) {
   const m = FELT_META[result];
   if (!m) return null;
+  const amountStr =
+    result === 'surrender' ? `+$${Math.floor(bet / 2)} back`
+    : result === 'win'     ? `+$${netProfit}`
+    : result === 'lose' || result === 'bust' ? `-$${Math.abs(netProfit)}`
+    : null;
   return (
     <div className={`mt-3 flex items-center gap-2.5 px-5 py-2 rounded-2xl border-2 font-black text-xl win-amount-in ${m.cls}`}
       style={{ backdropFilter: 'blur(4px)' }}>
       <span>{m.label}</span>
-      {m.payout && <span className="opacity-75 text-lg">{m.payout(bet)}</span>}
+      {amountStr && <span className="opacity-75 text-lg">{amountStr}</span>}
     </div>
   );
 }
@@ -480,6 +527,75 @@ const RESULT_META = {
   bust:      { emoji: '💥', label: 'Bust!',        cls: 'text-red-300   bg-red-950/70    border-red-700',       payout: b => `-$${b}` },
   surrender: { emoji: '🏳️', label: 'Surrendered',  cls: 'text-blue-200  bg-blue-950/70   border-blue-600',      payout: b => `+$${Math.floor(b/2)} back` },
 };
+
+// ── Insurance: Ace slides over hole card, both rotate 90° together ─
+function InsuranceDealerHand({ ace, hole, returning }) {
+  const groupClass = returning ? 'insurance-pair-return' : 'insurance-pair-present';
+  const aceClass   = returning ? 'ace-return-home'       : 'ace-cover-hole';
+  return (
+    <div className="relative" style={{ width: 176, height: 126 }}>
+      {/* Group wrapper — both cards rotate together */}
+      <div className={`absolute ${groupClass}`} style={{ left: 0, top: 0, width: 176, height: 126 }}>
+        {/* Hole card stays fixed within group */}
+        <div className="absolute" style={{ left: 92, top: 0 }}>
+          <Card card={hole} noAnimate />
+        </div>
+        {/* Ace slides right to overlap hole, then stays for group rotation */}
+        <div className={`absolute ${aceClass}`} style={{ left: 0, top: 0, zIndex: 10 }}>
+          <Card card={ace} noAnimate />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Insurance popup (appears ~1s after ace settles) ───────────────
+function InsurancePopup({ bet, trueCount, onDecision, playerHasBJ }) {
+  const insuranceBet = Math.floor(bet / 2);
+  const shouldTake = getInsuranceAdvice(trueCount);
+  const tcStr = (trueCount > 0 ? '+' : '') + trueCount.toFixed(1);
+
+  return (
+    <div className="insurance-popup-in mt-3 bg-gray-900/95 border border-gray-600 rounded-2xl px-4 py-3 shadow-2xl w-72"
+      style={{ backdropFilter: 'blur(6px)' }}>
+      <div className="text-center mb-2.5">
+        <div className="text-white font-black text-lg leading-none mb-0.5">
+          {playerHasBJ ? 'Even Money?' : 'Insurance?'}
+        </div>
+        <div className="text-gray-400 text-xs">
+          {playerHasBJ ? 'Guarantee a push, or play it out' : `Side bet $${insuranceBet} · pays 2:1`}
+        </div>
+        <div className="flex items-center justify-center gap-1.5 mt-1 text-xs">
+          <span className={`font-bold ${trueCount >= 3 ? 'text-green-400' : trueCount > 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
+            TC {tcStr}
+          </span>
+          <span className="text-gray-700">·</span>
+          <span className={shouldTake ? 'text-green-400 font-semibold' : 'text-gray-500'}>
+            {shouldTake ? 'Count says: Take' : 'Count says: Decline'}
+          </span>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => onDecision(true)}
+          className="relative flex-1 py-2 rounded-xl border border-green-700 bg-green-900/50 hover:bg-green-800/70 active:scale-95 transition-all text-center"
+        >
+          <span className="absolute top-1 right-1.5 font-mono text-[8px] px-1 py-px rounded bg-black/30 border border-white/20 text-white/50">Y</span>
+          <div className="text-white font-bold text-sm">{playerHasBJ ? 'Even Money' : 'Take'}</div>
+          <div className="text-green-400 text-xs">${insuranceBet}</div>
+        </button>
+        <button
+          onClick={() => onDecision(false)}
+          className="relative flex-1 py-2 rounded-xl border border-gray-600 bg-gray-800/50 hover:bg-gray-700/70 active:scale-95 transition-all text-center"
+        >
+          <span className="absolute top-1 right-1.5 font-mono text-[8px] px-1 py-px rounded bg-black/30 border border-white/20 text-white/50">N</span>
+          <div className="text-white font-bold text-sm">Decline</div>
+          <div className="text-gray-400 text-xs">no bet</div>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ResultBanner({ result, bet }) {
   const meta = RESULT_META[result];

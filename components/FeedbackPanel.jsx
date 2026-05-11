@@ -107,6 +107,12 @@ export default function FeedbackPanel({ result, lastMistakes = [], insuranceMist
               <div className="text-gray-300 text-xs leading-relaxed bg-gray-900/50 rounded-lg px-2 py-1.5">
                 {m.explanation}
               </div>
+              {m.countNote && (
+                <div className="text-blue-300 text-xs leading-relaxed bg-blue-950/30 border border-blue-800/50 rounded-lg px-2 py-1.5">
+                  <span className="font-semibold text-blue-400 uppercase tracking-wider" style={{ fontSize: '10px' }}>Count context · </span>
+                  {m.countNote}
+                </div>
+              )}
             </div>
           ))}
         </div>

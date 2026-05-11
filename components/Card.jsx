@@ -65,11 +65,11 @@ function pipFontSize(rank) {
   return '15px';
 }
 
-export default function Card({ card, dealIndex = 0 }) {
+export default function Card({ card, dealIndex = 0, noAnimate = false }) {
   if (!card) return null;
 
-  const animClass = card.justRevealed ? 'card-flip' : 'card-deal';
-  const animStyle = card.justRevealed ? {} : { animationDelay: `${dealIndex * 130}ms` };
+  const animClass = noAnimate ? '' : (card.justRevealed ? 'card-flip' : 'card-deal');
+  const animStyle = noAnimate || card.justRevealed ? {} : { animationDelay: `${dealIndex * 130}ms` };
 
   if (card.faceDown) {
     return (

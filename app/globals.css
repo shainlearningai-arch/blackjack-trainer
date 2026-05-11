@@ -20,6 +20,11 @@ body {
   .dealer-hand-cards[data-count="8"] { zoom: 0.45; }
 }
 
+/* ─── Player split hands auto-shrink on mobile ──────────────────── */
+@media (max-width: 640px) {
+  .player-split-hands { zoom: var(--split-zoom, 1); }
+}
+
 /* Hide number input spinners */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }

@@ -280,6 +280,15 @@ export default function BlackjackTrainer() {
   const playerHasCards = playerHands.some(h => h.length > 0);
   const isBJ = phase === 'over' && result === 'blackjack';
 
+  // Dynamic zoom for split hands on mobile — recalculates as cards are added
+  const splitZoom = (() => {
+    if (playerHands.length < 2) return 1;
+    const maxCards = Math.max(...playerHands.map(h => h.length), 2);
+    const handW = maxCards * 84 + (maxCards - 1) * 8 + 24; // cards + gaps + p-3 padding
+    const totalW = playerHands.length * handW + (playerHands.length - 1) * 8;
+    return Math.min(1, 330 / totalW);
+  })();
+
   return (
     <div className="min-h-[100dvh] lg:h-[100dvh] overflow-y-auto lg:overflow-hidden bg-gray-950 text-white">
       <div className="lg:h-full max-w-6xl mx-auto p-2 lg:p-3 flex flex-col lg:flex-row gap-2 lg:gap-3">
@@ -360,7 +369,10 @@ export default function BlackjackTrainer() {
             <div className="flex-1 flex flex-col items-center justify-center py-3 px-4">
               <div className="text-green-600 text-xs font-semibold uppercase tracking-widest mb-2">You</div>
               {playerHasCards ? (
-                <div className="flex flex-wrap gap-3 lg:gap-6 justify-center">
+                <div
+                  className={`flex gap-2 lg:gap-6 justify-center ${playerHands.length > 1 ? 'flex-nowrap player-split-hands' : 'flex-wrap'}`}
+                  style={playerHands.length > 1 ? { '--split-zoom': splitZoom } : {}}
+                >
                   {playerHands.map((hand, i) => (
                     <Hand
                       key={i}

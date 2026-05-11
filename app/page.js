@@ -384,7 +384,7 @@ export default function BlackjackTrainer() {
           </div>
 
           {/* Controls */}
-          <div className="flex-none rounded-xl bg-gray-900 border border-gray-800 px-4 py-2.5">
+          <div className="flex-none rounded-xl bg-gray-900 border border-gray-800 px-4 py-2.5 min-h-[64px] flex flex-col justify-center">
 
             {/* Deal button */}
             {(phase === 'betting' || phase === 'over') && (
@@ -394,7 +394,7 @@ export default function BlackjackTrainer() {
                   disabled={bankroll < bet}
                   className="relative w-full py-2.5 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black font-black rounded-xl text-lg transition-all shadow-lg shadow-yellow-900/30 disabled:opacity-40 disabled:cursor-not-allowed tracking-tight"
                 >
-                  {phase === 'over' ? '▶  Next Hand' : `▶  Deal  ·  $${bet}`}
+                  <span className="hidden sm:inline">▶  </span>{phase === 'over' ? 'Next Hand' : `Deal  ·  $${bet}`}
                   <span className="hidden sm:inline absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs font-bold px-1.5 py-0.5 rounded bg-black/15 border border-black/20 text-black/60">
                     Space
                   </span>

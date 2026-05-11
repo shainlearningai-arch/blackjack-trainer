@@ -47,7 +47,7 @@ export default function ActionButtons({ onAction, canDouble, canSurrender, canSp
   };
 
   return (
-    <div className="flex flex-wrap gap-2.5 justify-center">
+    <div className="flex gap-1.5 sm:gap-2.5 justify-center">
       {ACTIONS.map(({ move, key, label, icon, desc, bg, border, shadow }) => {
         const on = enabled[move];
         return (
@@ -59,7 +59,8 @@ export default function ActionButtons({ onAction, canDouble, canSurrender, canSp
               ${popping === move ? 'btn-action-pop' : ''}
               ${on ? 'hover:-translate-y-0.5 active:translate-y-0.5' : 'cursor-not-allowed opacity-25'}`}
             style={{
-              width: '78px', paddingTop: '12px', paddingBottom: '12px', gap: '2px',
+              width: 'clamp(54px, 17vw, 78px)',
+              paddingTop: '10px', paddingBottom: '10px', gap: '2px',
               background: on ? bg : '#1f2937',
               borderColor: on ? border : '#374151',
               boxShadow: on ? `0 6px 22px ${shadow}, 0 2px 6px rgba(0,0,0,0.45)` : 'none',
@@ -67,7 +68,7 @@ export default function ActionButtons({ onAction, canDouble, canSurrender, canSp
           >
             {/* Keyboard hint badge */}
             <span
-              className="absolute top-1.5 right-1.5 font-mono font-bold leading-none px-1 py-px rounded"
+              className="hidden sm:block absolute top-1.5 right-1.5 font-mono font-bold leading-none px-1 py-px rounded"
               style={{
                 fontSize: '9px',
                 background: 'rgba(0,0,0,0.35)',
@@ -77,12 +78,12 @@ export default function ActionButtons({ onAction, canDouble, canSurrender, canSp
             >
               {key}
             </span>
-            <span style={{ fontSize: '20px', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.03em' }}>
+            <span style={{ fontSize: '18px', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.03em' }}>
               {icon}
             </span>
-            <span style={{ fontSize: '13px', fontWeight: 700, lineHeight: 1 }}>{label}</span>
+            <span style={{ fontSize: '12px', fontWeight: 700, lineHeight: 1 }}>{label}</span>
             {on && (
-              <span style={{ fontSize: '10px', fontWeight: 400, opacity: 0.55, lineHeight: 1 }}>{desc}</span>
+              <span className="hidden sm:block" style={{ fontSize: '10px', fontWeight: 400, opacity: 0.55, lineHeight: 1 }}>{desc}</span>
             )}
           </button>
         );

@@ -281,25 +281,25 @@ export default function BlackjackTrainer() {
   const isBJ = phase === 'over' && result === 'blackjack';
 
   return (
-    <div className="h-screen overflow-hidden bg-gray-950 text-white">
-      <div className="h-full max-w-6xl mx-auto p-3 flex flex-col lg:flex-row gap-3">
+    <div className="min-h-[100dvh] lg:h-[100dvh] overflow-y-auto lg:overflow-hidden bg-gray-950 text-white">
+      <div className="lg:h-full max-w-6xl mx-auto p-2 lg:p-3 flex flex-col lg:flex-row gap-2 lg:gap-3">
 
         {/* ── Left: Table ── */}
-        <div className="flex-1 flex flex-col gap-2 min-h-0">
+        <div className="flex flex-col gap-2 lg:flex-1 lg:min-h-0">
 
           {/* Topbar */}
-          <div className="flex-none flex items-center justify-between px-4 py-2 rounded-xl bg-gray-900 border border-gray-800">
-            <span className="font-bold tracking-tight text-sm">Blackjack Trainer</span>
-            <div className="flex items-center gap-4 text-xs">
+          <div className="flex-none flex items-center justify-between px-3 lg:px-4 py-2 rounded-xl bg-gray-900 border border-gray-800">
+            <span className="font-bold tracking-tight text-sm">Blackjack GTO</span>
+            <div className="flex items-center gap-3 lg:gap-4 text-xs">
               <div>
                 <span className="text-gray-500">Bankroll </span>
                 <span className={`font-bold tabular-nums ${bankroll < 100 ? 'text-red-400' : 'text-emerald-400'}`}>${bankroll}</span>
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <span className="text-gray-500">Shoe </span>
                 <span className="text-gray-300 font-semibold">{decksLeft.toFixed(1)}d</span>
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <span className="text-gray-500">Hands </span>
                 <span className="text-gray-300 font-semibold">{stats.hands}</span>
               </div>
@@ -308,7 +308,7 @@ export default function BlackjackTrainer() {
 
           {/* Table felt */}
           <div
-            className="flex-1 min-h-0 relative rounded-3xl overflow-hidden border-2 border-green-900 shadow-2xl flex flex-col"
+            className="relative rounded-3xl overflow-hidden border-2 border-green-900 shadow-2xl flex flex-col min-h-[440px] lg:flex-1 lg:min-h-0"
             style={{ background: 'radial-gradient(ellipse at 50% 30%, #14532d 0%, #052e16 100%)' }}
           >
             {/* Flash overlay */}
@@ -360,7 +360,7 @@ export default function BlackjackTrainer() {
             <div className="flex-1 flex flex-col items-center justify-center py-3 px-4">
               <div className="text-green-600 text-xs font-semibold uppercase tracking-widest mb-2">You</div>
               {playerHasCards ? (
-                <div className="flex flex-wrap gap-6 justify-center">
+                <div className="flex flex-wrap gap-3 lg:gap-6 justify-center">
                   {playerHands.map((hand, i) => (
                     <Hand
                       key={i}
@@ -395,7 +395,7 @@ export default function BlackjackTrainer() {
                   className="relative w-full py-2.5 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black font-black rounded-xl text-lg transition-all shadow-lg shadow-yellow-900/30 disabled:opacity-40 disabled:cursor-not-allowed tracking-tight"
                 >
                   {phase === 'over' ? '▶  Next Hand' : `▶  Deal  ·  $${bet}`}
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs font-bold px-1.5 py-0.5 rounded bg-black/15 border border-black/20 text-black/60">
+                  <span className="hidden sm:inline absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs font-bold px-1.5 py-0.5 rounded bg-black/15 border border-black/20 text-black/60">
                     Space
                   </span>
                 </button>
@@ -443,7 +443,7 @@ export default function BlackjackTrainer() {
         </div>
 
         {/* ── Right: Info panels ── */}
-        <div className="w-full lg:w-72 flex flex-col gap-2 min-h-0 overflow-y-auto">
+        <div className="w-full lg:w-72 flex flex-col gap-2 lg:min-h-0 lg:overflow-y-auto">
 
           {/* Bet input */}
           <div className="flex-none bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 space-y-2">

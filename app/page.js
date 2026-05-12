@@ -495,7 +495,12 @@ export default function BlackjackTrainer() {
                 pattern="[0-9]*"
                 value={betInput}
                 onChange={e => handleBetInput(e.target.value)}
-                onBlur={() => setBetInput(String(bet))}
+                onFocus={e => e.target.select()}
+                onBlur={() => {
+                  const fallback = betInput.trim() === '' ? 10 : bet;
+                  setBet(Math.max(MIN_BET, Math.min(MAX_BET, Math.min(bankroll, fallback))));
+                  setBetInput(String(Math.max(MIN_BET, Math.min(MAX_BET, Math.min(bankroll, fallback)))));
+                }}
                 disabled={phase !== 'betting' && phase !== 'over'}
                 className="w-full h-10 pl-9 pr-3 rounded-lg bg-gray-800 border border-gray-600 text-white font-black text-xl text-right focus:outline-none focus:border-yellow-500 tabular-nums disabled:opacity-40"
               />

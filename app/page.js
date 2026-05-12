@@ -137,7 +137,7 @@ export default function BlackjackTrainer() {
   const {
     shoe, runningCount, trueCount,
     phase, playerHands, activeHandIndex, dealerHand,
-    bet, lastBet, lastNetProfit, bankroll, result, lastMistakes, lastCardCountHints,
+    bet, lastBet, lastNetProfit, bankroll, handBets, result, lastMistakes, lastCardCountHints,
     stats, canDouble, canSurrender, canSplit,
     playerHadBlackjack, insuranceTook, insuranceResult, insuranceMistake,
     setBet, deal, playerAction, dealerPlay, reset, insuranceAction, revealHole,
@@ -151,6 +151,33 @@ export default function BlackjackTrainer() {
   const [showInsurancePrompt, setShowInsurancePrompt] = useState(false);
   const [insuranceReturning,  setInsuranceReturning]  = useState(false);
   const dealerPlayedRef = useRef(false);
+
+  // Show full bankroll during active play — only reflect loss/win when round settles
+  const activeBets = ['insurance', 'player', 'dealer'].includes(phase)
+    ? (handBets ?? [bet]).reduce((s, b) => s + b, 0)
+    : 0;
+  const displayBankroll = bankroll + activeBets;
+
+  const [animatedBankroll, setAnimatedBankroll] = useState(() => bankroll);
+  const animBankrollRef = useRef(bankroll);
+  const animRAF = useRef(null);
+  useEffect(() => {
+    const start = animBankrollRef.current;
+    const end = displayBankroll;
+    if (start === end) return;
+    const startTime = performance.now();
+    if (animRAF.current) cancelAnimationFrame(animRAF.current);
+    const step = (now) => {
+      const t = Math.min((now - startTime) / 600, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = Math.round(start + (end - start) * eased);
+      animBankrollRef.current = val;
+      setAnimatedBankroll(val);
+      if (t < 1) animRAF.current = requestAnimationFrame(step);
+    };
+    animRAF.current = requestAnimationFrame(step);
+    return () => { if (animRAF.current) cancelAnimationFrame(animRAF.current); };
+  }, [displayBankroll]);
 
   const prevBet = useRef(bet);
   useEffect(() => {
@@ -302,7 +329,7 @@ export default function BlackjackTrainer() {
             <div className="flex items-center gap-3 lg:gap-4 text-xs">
               <div>
                 <span className="text-gray-500">Bankroll </span>
-                <span className={`font-bold tabular-nums ${bankroll < 100 ? 'text-red-400' : 'text-emerald-400'}`}>${bankroll}</span>
+                <span className={`font-bold tabular-nums ${displayBankroll < 100 ? 'text-red-400' : 'text-emerald-400'}`}>${animatedBankroll}</span>
               </div>
               <div className="hidden sm:block">
                 <span className="text-gray-500">Shoe </span>

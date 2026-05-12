@@ -18,5 +18,11 @@ export default function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
+    {
+      url: 'https://blackjackgto.com/how-to-count-cards',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
   ];
 }

@@ -85,6 +85,12 @@ export default function CountDisplay({ runningCount, trueCount, lastCardCountHin
           <span><span className="text-red-400 font-bold">-1</span> → 10 J Q K A</span>
         </div>
         <div className="text-gray-500">True Count = Running Count ÷ Decks remaining ({decksLeft?.toFixed(1)} left)</div>
+        <a
+          href="/how-to-count-cards"
+          className="inline-block mt-1 text-yellow-500 hover:text-yellow-400 underline underline-offset-2"
+        >
+          How do I count cards?
+        </a>
       </div>
     </div>
   );

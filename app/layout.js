@@ -12,13 +12,38 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Blackjack Trainer — Free Basic Strategy & Card Counting Practice",
-  description: "Practice blackjack basic strategy and Hi-Lo card counting for free. Interactive trainer with real-time feedback, strategy charts, and mistake tracking. No money, no risk.",
-  keywords: "blackjack trainer, blackjack basic strategy, card counting practice, hi-lo card counting, blackjack strategy chart, free blackjack trainer",
+  metadataBase: new URL('https://blackjackgto.com'),
+  title: {
+    default: "Blackjack GTO — Free Basic Strategy & Card Counting Trainer",
+    template: "%s | Blackjack GTO",
+  },
+  description: "Master blackjack with Blackjack GTO — the free interactive trainer for basic strategy and Hi-Lo card counting. Get real-time feedback, track mistakes, and study the strategy chart. No money, no risk.",
+  keywords: [
+    "blackjack trainer", "blackjack basic strategy", "card counting practice",
+    "hi-lo card counting", "blackjack strategy chart", "free blackjack trainer",
+    "blackjack GTO", "learn card counting", "blackjack simulator",
+    "blackjack practice", "true count", "running count",
+  ],
+  authors: [{ name: "Blackjack GTO" }],
+  creator: "Blackjack GTO",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Blackjack Trainer — Free Basic Strategy & Card Counting Practice",
-    description: "Practice blackjack basic strategy and Hi-Lo card counting for free. Interactive trainer with real-time feedback.",
+    title: "Blackjack GTO — Free Basic Strategy & Card Counting Trainer",
+    description: "Master blackjack basic strategy and card counting with real-time feedback. Free, no risk, no sign-up.",
+    url: "https://blackjackgto.com",
+    siteName: "Blackjack GTO",
     type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "Blackjack GTO — Free Basic Strategy & Card Counting Trainer",
+    description: "Master blackjack basic strategy and card counting with real-time feedback. Free, no risk.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
   },
 };
 

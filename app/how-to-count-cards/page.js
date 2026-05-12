@@ -246,39 +246,54 @@ export default function HowToCountCards() {
               <thead>
                 <tr className="bg-gray-800 text-gray-400 uppercase text-xs tracking-wider">
                   <th className="px-4 py-3 text-left">True Count</th>
-                  <th className="px-4 py-3 text-left">Situation</th>
+                  <th className="px-4 py-3 text-left">Player edge</th>
                   <th className="px-4 py-3 text-left">Bet size</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 <tr className="bg-gray-900">
                   <td className="px-4 py-3 font-bold text-red-400">-1 or lower</td>
-                  <td className="px-4 py-3 text-gray-400">Shoe favors dealer</td>
+                  <td className="px-4 py-3 text-red-400">-1% or worse</td>
                   <td className="px-4 py-3 text-gray-300">Minimum bet</td>
                 </tr>
                 <tr className="bg-gray-900">
-                  <td className="px-4 py-3 font-bold text-gray-400">0 to +1</td>
-                  <td className="px-4 py-3 text-gray-400">Roughly neutral</td>
+                  <td className="px-4 py-3 font-bold text-gray-400">0</td>
+                  <td className="px-4 py-3 text-gray-400">-0.5% (house edge)</td>
+                  <td className="px-4 py-3 text-gray-300">Minimum bet</td>
+                </tr>
+                <tr className="bg-gray-900">
+                  <td className="px-4 py-3 font-bold text-gray-400">+1</td>
+                  <td className="px-4 py-3 text-gray-400">0% (breakeven)</td>
                   <td className="px-4 py-3 text-gray-300">Minimum bet</td>
                 </tr>
                 <tr className="bg-gray-900">
                   <td className="px-4 py-3 font-bold text-yellow-400">+2</td>
-                  <td className="px-4 py-3 text-gray-400">Slight advantage</td>
+                  <td className="px-4 py-3 text-yellow-400">+0.5%</td>
                   <td className="px-4 py-3 text-gray-300">2x base bet</td>
                 </tr>
                 <tr className="bg-gray-900">
                   <td className="px-4 py-3 font-bold text-green-400">+3</td>
-                  <td className="px-4 py-3 text-gray-400">Clear advantage</td>
+                  <td className="px-4 py-3 text-green-400">+1.0%</td>
                   <td className="px-4 py-3 text-gray-300">4x base bet</td>
                 </tr>
                 <tr className="bg-gray-900">
-                  <td className="px-4 py-3 font-bold text-green-400">+4 or higher</td>
-                  <td className="px-4 py-3 text-gray-400">Strong advantage</td>
+                  <td className="px-4 py-3 font-bold text-green-400">+4</td>
+                  <td className="px-4 py-3 text-green-400">+1.5%</td>
                   <td className="px-4 py-3 text-gray-300">8x base bet</td>
+                </tr>
+                <tr className="bg-gray-900">
+                  <td className="px-4 py-3 font-bold text-green-400">+5 or higher</td>
+                  <td className="px-4 py-3 text-green-400">+2.0% or more</td>
+                  <td className="px-4 py-3 text-gray-300">8x base bet (max)</td>
                 </tr>
               </tbody>
             </table>
           </div>
+          <p className="text-xs text-gray-500">
+            Edge estimates assume 6-deck S17 with perfect basic strategy. Each true count point
+            is worth approximately 0.5%. The house starts with a 0.5% edge at a neutral count,
+            so the player breaks even at TC +1 and gains roughly 0.5% for each point above that.
+          </p>
 
           <p className="leading-relaxed">
             This is called a 1-to-8 spread. Real casino counters often use wider spreads,

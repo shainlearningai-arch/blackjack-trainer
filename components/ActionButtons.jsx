@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 const ACTIONS = [
   {
-    move: 'H', key: 'H', label: 'Hit',       icon: '+1',  desc: 'take a card',
+    move: 'H', key: '↓', label: 'Hit',       icon: '↓',   desc: 'take a card',
     bg: 'linear-gradient(155deg,#2563eb,#1e40af)',
     border: '#60a5fa', shadow: 'rgba(37,99,235,0.5)',
   },
@@ -13,7 +13,7 @@ const ACTIONS = [
     border: '#9ca3af', shadow: 'rgba(75,85,99,0.45)',
   },
   {
-    move: 'D', key: 'D', label: 'Double',    icon: '×2',  desc: 'double + 1 card',
+    move: 'D', key: '2', label: 'Double',    icon: '×2',  desc: 'double + 1 card',
     bg: 'linear-gradient(155deg,#d97706,#92400e)',
     border: '#fbbf24', shadow: 'rgba(217,119,6,0.55)',
   },

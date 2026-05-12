@@ -256,9 +256,9 @@ export default function BlackjackTrainer() {
       const k = e.key.toLowerCase();
 
       if (phase === 'player') {
-        if (k === 'h') { e.preventDefault(); handlePlayerAction('H'); }
+        if (k === 'h' || k === 'arrowdown') { e.preventDefault(); handlePlayerAction('H'); }
         if (k === 's' || k === ' ') { e.preventDefault(); handlePlayerAction('S'); }
-        if (k === 'd' && canDouble)    { e.preventDefault(); handlePlayerAction('D'); }
+        if ((k === 'd' || k === '2') && canDouble)    { e.preventDefault(); handlePlayerAction('D'); }
         if (k === 'p' && canSplit)     { e.preventDefault(); handlePlayerAction('P'); }
         if (k === 'r' && canSurrender) { e.preventDefault(); handlePlayerAction('R'); }
       }
@@ -363,6 +363,26 @@ export default function BlackjackTrainer() {
                   playerHasBJ={playerHadBlackjack}
                 />
               )}
+            </div>
+
+            {/* Mobile deck calculator strip */}
+            <div className="lg:hidden flex items-center justify-center gap-4 py-1 border-y border-green-900/40 bg-black/20 text-xs">
+              <span>
+                <span className="text-green-700 font-semibold uppercase tracking-wider">RC </span>
+                <span className={`font-black tabular-nums ${runningCount > 0 ? 'text-green-400' : runningCount < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                  {runningCount > 0 ? `+${runningCount}` : runningCount}
+                </span>
+              </span>
+              <span>
+                <span className="text-green-700 font-semibold uppercase tracking-wider">TC </span>
+                <span className={`font-black tabular-nums ${trueCount > 0 ? 'text-green-400' : trueCount < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                  {trueCount > 0 ? `+${trueCount.toFixed(1)}` : trueCount.toFixed(1)}
+                </span>
+              </span>
+              <span>
+                <span className="text-green-700 font-semibold uppercase tracking-wider">Deck </span>
+                <span className="font-black tabular-nums text-gray-300">{decksLeft.toFixed(1)}</span>
+              </span>
             </div>
 
             {/* Player zone */}

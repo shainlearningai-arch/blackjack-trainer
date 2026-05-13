@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -64,6 +65,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         {children}
         <Analytics />
+        <SpeedInsights />
         <footer className="flex-none flex items-center justify-center gap-6 py-2 text-xs text-gray-700 bg-gray-950">
           <a href="/about" className="hover:text-gray-500 transition-colors">About</a>
           <a href="/privacy-policy" className="hover:text-gray-500 transition-colors">Privacy Policy</a>

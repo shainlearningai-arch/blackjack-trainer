@@ -44,7 +44,6 @@ const BASE = 'https://blackjackgto.com';
 const charts = [
   {
     png: '/blackjack-hard-totals-strategy-chart.png',
-    svg: '/blackjack-hard-totals-strategy-chart.svg',
     alt: 'Blackjack hard totals basic strategy chart — 6 deck, dealer stands on soft 17',
     width: 1048,
     height: 904,
@@ -54,7 +53,6 @@ const charts = [
   },
   {
     png: '/blackjack-soft-totals-strategy-chart.png',
-    svg: '/blackjack-soft-totals-strategy-chart.svg',
     alt: 'Blackjack soft totals strategy chart — ace hands, when to double with an ace in blackjack',
     width: 1048,
     height: 792,
@@ -64,7 +62,6 @@ const charts = [
   },
   {
     png: '/blackjack-pair-splitting-chart.png',
-    svg: '/blackjack-pair-splitting-chart.svg',
     alt: 'Blackjack pairs splitting strategy chart — when to split pairs, 6 deck rules',
     width: 1048,
     height: 904,
@@ -74,7 +71,6 @@ const charts = [
   },
   {
     png: '/blackjack-basic-strategy-chart.png',
-    svg: '/blackjack-basic-strategy-chart.svg',
     alt: 'Complete blackjack basic strategy chart — all hard totals, soft totals, and pairs in one printable chart',
     width: 1048,
     height: 2212,
@@ -183,23 +179,18 @@ export default function BlackjackStrategyChartPage() {
         </nav>
 
         <div className="space-y-14">
-          {charts.map(({ png, svg, alt, width, height, heading, id, desc }) => (
+          {charts.map(({ png, alt, width, height, heading, id, desc }) => (
             <section key={id} id={id}>
               <h2 className="text-lg font-bold text-white mb-3">{heading}</h2>
               <p className="text-gray-400 text-sm mb-4 leading-relaxed">{desc}</p>
-              <a href={svg} target="_blank" rel="noopener noreferrer" title={`Download SVG: ${heading}`}>
-                <img
-                  src={png}
-                  alt={alt}
-                  width={width}
-                  height={height}
-                  className="rounded-xl w-full h-auto border border-gray-800 hover:border-gray-600 transition-colors"
-                  loading="lazy"
-                />
-              </a>
-              <p className="text-xs text-gray-600 mt-2 text-center">
-                Right-click to save · click to download SVG
-              </p>
+              <img
+                src={png}
+                alt={alt}
+                width={width}
+                height={height}
+                className="rounded-xl w-full h-auto border border-gray-800"
+                loading="lazy"
+              />
             </section>
           ))}
         </div>

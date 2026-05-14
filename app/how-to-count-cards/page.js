@@ -372,14 +372,20 @@ export default function HowToCountCards() {
           </p>
           <p className="leading-relaxed">
             Counting also does not help if your basic strategy is wrong. Every basic strategy
-            mistake costs more than the counting edge gives back. Master basic strategy first.
-            Once your decisions are automatic, add the count.
+            mistake costs more than the counting edge gives back.{' '}
+            <a href="/blackjack-strategy-chart" className="text-blue-400 hover:text-blue-300 underline">
+              Master basic strategy first
+            </a>
+            . Once your decisions are automatic, add the count.
           </p>
         </section>
 
-        <div className="pt-8 border-t border-gray-800 flex items-center justify-between">
+        <div className="pt-8 border-t border-gray-800 flex items-center justify-between flex-wrap gap-3">
           <a href="/" className="text-yellow-400 hover:text-yellow-300 text-sm font-semibold">
             Back to Trainer
+          </a>
+          <a href="/blackjack-strategy-chart" className="text-blue-400 hover:text-blue-300 text-sm font-semibold">
+            Basic Strategy Charts →
           </a>
           <a href="/about" className="text-gray-500 hover:text-gray-400 text-sm">
             About

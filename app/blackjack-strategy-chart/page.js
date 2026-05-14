@@ -22,68 +22,139 @@ export const metadata = {
     description:
       'Color-coded blackjack strategy charts for 6-deck games. Hard totals, soft totals, and pair splitting — free to save or print.',
     url: 'https://blackjackgto.com/blackjack-strategy-chart',
-    images: [{ url: '/blackjack-basic-strategy-chart.svg', width: 524, alt: 'Blackjack Basic Strategy Chart' }],
+    images: [
+      {
+        url: 'https://blackjackgto.com/blackjack-basic-strategy-chart.png',
+        width: 1048,
+        height: 2212,
+        alt: 'Complete blackjack basic strategy chart — hard totals, soft totals, and pairs',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blackjack Basic Strategy Chart',
+    description: 'Color-coded charts for hard totals, soft totals, and pair splitting. Free to save.',
+    images: ['https://blackjackgto.com/blackjack-basic-strategy-chart.png'],
   },
 };
 
+const BASE = 'https://blackjackgto.com';
+
 const charts = [
   {
-    src: '/blackjack-hard-totals-strategy-chart.svg',
+    png: '/blackjack-hard-totals-strategy-chart.png',
+    svg: '/blackjack-hard-totals-strategy-chart.svg',
     alt: 'Blackjack hard totals basic strategy chart — 6 deck, dealer stands on soft 17',
+    width: 1048,
+    height: 904,
     heading: 'Hard Totals',
     id: 'hard-totals',
-    body: (
-      <>
-        A <strong>hard hand</strong> has no ace, or an ace that must count as 1.
-        The most important numbers: <strong>double on 10 or 11</strong> against most dealer cards,
-        stand on 17+, and surrender 16 vs. 9/10/Ace before hitting.
-      </>
-    ),
+    desc: 'A hard hand has no ace, or an ace that must count as 1. The most important rules: double on 10 or 11 against most dealer cards, stand on 17+, and surrender 16 vs. 9/10/Ace before hitting.',
   },
   {
-    src: '/blackjack-soft-totals-strategy-chart.svg',
-    alt: 'Blackjack soft totals strategy chart — ace hands, when to double with an ace',
+    png: '/blackjack-soft-totals-strategy-chart.png',
+    svg: '/blackjack-soft-totals-strategy-chart.svg',
+    alt: 'Blackjack soft totals strategy chart — ace hands, when to double with an ace in blackjack',
+    width: 1048,
+    height: 792,
     heading: 'Soft Totals (Ace + X)',
     id: 'soft-totals',
-    body: (
-      <>
-        A <strong>soft hand</strong> contains an ace counted as 11.
-        The key rule: <strong>always double A-7 vs. 2–6</strong>; otherwise stand on soft 18+ and
-        hit soft 17 or lower when the dealer shows 7 or higher.
-      </>
-    ),
+    desc: 'A soft hand contains an ace counted as 11. Always double A-7 vs. 2–6; stand on soft 18+ and hit soft 17 or lower when the dealer shows 7 or higher.',
   },
   {
-    src: '/blackjack-pair-splitting-chart.svg',
+    png: '/blackjack-pair-splitting-chart.png',
+    svg: '/blackjack-pair-splitting-chart.svg',
     alt: 'Blackjack pairs splitting strategy chart — when to split pairs, 6 deck rules',
+    width: 1048,
+    height: 904,
     heading: 'Pair Splitting',
     id: 'pairs',
-    body: (
-      <>
-        <strong>Always split aces and 8s.</strong> Never split 10s or 5s.
-        Split 9s against dealer 2–6 and 8–9, but stand vs. 7, 10, or Ace.
-        P* cells mean split only if the casino allows re-splitting after the initial split.
-      </>
-    ),
+    desc: 'Always split aces and 8s. Never split 10s or 5s. Split 9s against dealer 2–6 and 8–9 but stand vs. 7, 10, or Ace. P* cells mean split only if re-splitting is allowed.',
   },
   {
-    src: '/blackjack-basic-strategy-chart.svg',
-    alt: 'Complete blackjack basic strategy chart — all hard totals, soft totals, and pairs in one chart',
+    png: '/blackjack-basic-strategy-chart.png',
+    svg: '/blackjack-basic-strategy-chart.svg',
+    alt: 'Complete blackjack basic strategy chart — all hard totals, soft totals, and pairs in one printable chart',
+    width: 1048,
+    height: 2212,
     heading: 'Complete Strategy Chart',
     id: 'complete',
-    body: (
-      <>
-        All three tables in one image — save or print this for a full reference.
-        Memorizing this chart cuts the house edge to roughly <strong>0.5%</strong>,
-        the lowest of any standard casino game.
-      </>
-    ),
+    desc: 'All three tables in one image — save or print this for a full reference. Memorizing this chart cuts the house edge to roughly 0.5%, the lowest of any standard casino game.',
   },
 ];
+
+const faqItems = [
+  {
+    q: 'What is blackjack basic strategy?',
+    a: 'Basic strategy is the mathematically correct action (hit, stand, double, split, or surrender) for every possible combination of your hand and the dealer\'s up card. Following it perfectly reduces the house edge to around 0.5% in a 6-deck game.',
+  },
+  {
+    q: 'Is this chart for 6-deck blackjack?',
+    a: 'Yes. These charts are optimized for 6-deck shoes where the dealer stands on soft 17 and late surrender is available — the most common rules in Las Vegas and online casinos.',
+  },
+  {
+    q: 'When should you surrender in blackjack?',
+    a: 'Surrender 16 vs. dealer 9, 10, or Ace, and surrender 15 vs. dealer 10. These are the only surrender plays in the basic strategy for 6-deck soft-17 rules.',
+  },
+  {
+    q: 'Should you always split Aces and 8s?',
+    a: 'Yes — always split aces and 8s regardless of the dealer\'s card. Splitting aces gives you two strong starting hands; splitting 8s turns a terrible 16 into two hands starting at 8.',
+  },
+  {
+    q: 'When should you double down in blackjack?',
+    a: 'Double down on hard 11 against any dealer card except Ace, on hard 10 against dealer 2–9, and on hard 9 against dealer 3–6. For soft hands, double A-7 vs. dealer 2–6 and A-2 through A-6 against the dealer\'s weaker cards.',
+  },
+  {
+    q: 'Does basic strategy guarantee winning?',
+    a: 'No — basic strategy minimizes the house edge but doesn\'t eliminate it. It tells you the play with the highest expected value given the information available. You will still lose sessions; basic strategy just makes those losses as small as possible over time.',
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${BASE}/blackjack-strategy-chart`,
+      url: `${BASE}/blackjack-strategy-chart`,
+      name: 'Blackjack Basic Strategy Chart — Hard Totals, Soft Totals & Pairs',
+      description:
+        'Free color-coded blackjack basic strategy charts for 6-deck games covering hard totals, soft totals, and pair splitting.',
+      isPartOf: { '@id': BASE },
+      about: { '@type': 'Thing', name: 'Blackjack basic strategy' },
+    },
+    ...charts.map(({ png, alt, width, height, heading }) => ({
+      '@type': 'ImageObject',
+      contentUrl: `${BASE}${png}`,
+      url: `${BASE}/blackjack-strategy-chart`,
+      name: heading + ' — Blackjack Basic Strategy Chart',
+      description: alt,
+      width,
+      height,
+      encodingFormat: 'image/png',
+      license: `${BASE}/privacy-policy`,
+      creator: { '@type': 'Organization', name: 'Blackjack GTO', url: BASE },
+    })),
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+};
 
 export default function BlackjackStrategyChartPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         <h1 className="text-2xl font-bold text-white mb-2">
@@ -95,11 +166,11 @@ export default function BlackjackStrategyChartPage() {
 
         <p className="text-gray-300 text-sm mb-10 leading-relaxed">
           Basic strategy is the mathematically correct play for every hand in blackjack.
-          Follow these three charts and the house edge drops to around 0.5% — lower than any other
-          table game. Each chart targets a specific hand type: hard totals, soft totals, and pairs.
+          Follow these three charts and the house edge drops to around 0.5% — lower than
+          any other table game. Each chart covers a specific hand type.
         </p>
 
-        <nav className="flex flex-wrap gap-3 mb-10">
+        <nav className="flex flex-wrap gap-3 mb-10" aria-label="Jump to chart">
           {charts.map(({ id, heading }) => (
             <a
               key={id}
@@ -112,22 +183,22 @@ export default function BlackjackStrategyChartPage() {
         </nav>
 
         <div className="space-y-14">
-          {charts.map(({ src, alt, heading, id, body }) => (
+          {charts.map(({ png, svg, alt, width, height, heading, id, desc }) => (
             <section key={id} id={id}>
               <h2 className="text-lg font-bold text-white mb-3">{heading}</h2>
-              <p className="text-gray-400 text-sm mb-4 leading-relaxed">{body}</p>
-              <a href={src} target="_blank" rel="noopener noreferrer" title={`View full-size: ${alt}`}>
+              <p className="text-gray-400 text-sm mb-4 leading-relaxed">{desc}</p>
+              <a href={svg} target="_blank" rel="noopener noreferrer" title={`Download SVG: ${heading}`}>
                 <img
-                  src={src}
+                  src={png}
                   alt={alt}
-                  width={524}
-                  height={440}
+                  width={width}
+                  height={height}
                   className="rounded-xl w-full h-auto border border-gray-800 hover:border-gray-600 transition-colors"
                   loading="lazy"
                 />
               </a>
               <p className="text-xs text-gray-600 mt-2 text-center">
-                Click the chart to open full size · right-click to save
+                Right-click to save · click to download SVG
               </p>
             </section>
           ))}
@@ -137,13 +208,13 @@ export default function BlackjackStrategyChartPage() {
           <h2 className="text-lg font-bold text-white mb-4">Color Key</h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
             {[
-              { color: 'bg-blue-800', label: 'H', name: 'Hit' },
-              { color: 'bg-gray-600', label: 'S', name: 'Stand' },
-              { color: 'bg-yellow-700', label: 'D', name: 'Double (else Hit)' },
+              { color: 'bg-blue-800',   label: 'H',  name: 'Hit' },
+              { color: 'bg-gray-600',   label: 'S',  name: 'Stand' },
+              { color: 'bg-yellow-700', label: 'D',  name: 'Double (else Hit)' },
               { color: 'bg-yellow-900', label: 'D*', name: 'Double (else Stand)' },
-              { color: 'bg-purple-800', label: 'P', name: 'Split' },
+              { color: 'bg-purple-800', label: 'P',  name: 'Split' },
               { color: 'bg-purple-900', label: 'P*', name: 'Split (else Hit)' },
-              { color: 'bg-red-900', label: 'R', name: 'Surrender (else Hit)' },
+              { color: 'bg-red-900',    label: 'R',  name: 'Surrender (else Hit)' },
             ].map(({ color, label, name }) => (
               <div key={label} className="flex items-center gap-2">
                 <span className={`${color} text-white font-bold text-xs px-2 py-0.5 rounded w-9 text-center`}>
@@ -162,56 +233,31 @@ export default function BlackjackStrategyChartPage() {
             The free trainer on this site deals hands and tells you instantly if your decision
             matches basic strategy, so you can build the reflex before you sit at a table.
           </p>
-          <a
-            href="/"
-            className="inline-block bg-blue-700 hover:bg-blue-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
-          >
-            Open the Trainer →
-          </a>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="/"
+              className="inline-block bg-blue-700 hover:bg-blue-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+            >
+              Open the Trainer →
+            </a>
+            <a
+              href="/how-to-count-cards"
+              className="inline-block bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+            >
+              Learn Card Counting →
+            </a>
+          </div>
         </section>
 
         <section className="mt-14 border-t border-gray-800 pt-10">
-          <h2 className="text-lg font-bold text-white mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-lg font-bold text-white mb-6">Frequently Asked Questions</h2>
           <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-200 mb-1">
-                What is blackjack basic strategy?
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Basic strategy is a set of rules that tells you the statistically best action
-                (hit, stand, double, split, or surrender) for every possible combination of your
-                hand and the dealer&apos;s up card. Following it perfectly reduces the house edge to
-                around 0.5% in a 6-deck game.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-200 mb-1">
-                Is this chart for 6-deck blackjack?
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Yes. These charts are optimized for 6-deck shoes where the dealer stands on soft 17
-                and late surrender is available — the most common rules in Las Vegas and online casinos.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-200 mb-1">
-                When should you surrender in blackjack?
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Surrender 16 vs. dealer 9, 10, or Ace, and surrender 15 vs. dealer 10. These are the
-                only surrender plays in the basic strategy for 6-deck soft-17 rules.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-200 mb-1">
-                Should you always split Aces and 8s?
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Yes — always split aces and 8s regardless of the dealer&apos;s card. Splitting aces
-                gives you two strong starting hands; splitting 8s turns a terrible 16 into two winnable
-                hands starting at 8.
-              </p>
-            </div>
+            {faqItems.map(({ q, a }) => (
+              <div key={q}>
+                <h3 className="text-sm font-semibold text-gray-200 mb-1">{q}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{a}</p>
+              </div>
+            ))}
           </div>
         </section>
 

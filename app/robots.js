@@ -4,6 +4,9 @@ export default function robots() {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://blackjackgto.com/sitemap.xml',
+    sitemap: [
+      'https://blackjackgto.com/sitemap.xml',
+      'https://blackjackgto.com/image-sitemap.xml',
+    ],
   };
 }

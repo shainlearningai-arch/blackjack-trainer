@@ -316,7 +316,29 @@ export default function BlackjackTrainer() {
     return Math.min(1, 330 / totalW);
   })();
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Blackjack GTO Trainer',
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Any — runs in the browser',
+    url: 'https://blackjackgto.com',
+    description: 'Free interactive blackjack trainer with real-time basic strategy feedback and Hi-Lo card counting practice. No signup, no money, no risk.',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    featureList: [
+      'Real-time basic strategy feedback on every decision',
+      'Hi-Lo running count and true count display',
+      'Basic strategy chart reference built in',
+      '6-deck shoe simulation with penetration',
+      'Mistake tracking and session stats',
+      'Keyboard shortcuts for fast play',
+    ],
+    author: { '@type': 'Organization', name: 'Blackjack GTO', url: 'https://blackjackgto.com' },
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="min-h-[100dvh] lg:h-[100dvh] overflow-y-auto lg:overflow-hidden bg-gray-950 text-white">
       <div className="lg:h-full max-w-6xl mx-auto p-2 lg:p-3 flex flex-col lg:flex-row gap-2 lg:gap-3">
 
@@ -553,6 +575,39 @@ export default function BlackjackTrainer() {
 
       </div>
     </div>
+
+    {/* SEO content — below the game, indexed by Google */}
+    <section className="bg-gray-950 border-t border-gray-900 text-gray-400">
+      <div className="max-w-3xl mx-auto px-4 py-12">
+        <h2 className="text-white font-bold text-lg mb-3">Free Blackjack Basic Strategy &amp; Card Counting Trainer</h2>
+        <p className="text-sm leading-relaxed mb-6">
+          Blackjack GTO is a free interactive blackjack trainer that teaches you the correct play for every hand.
+          Each decision is graded against mathematically optimal basic strategy in real time — hit, stand, double, split, or surrender.
+          The built-in Hi-Lo card counting display tracks the running count and true count as you play, so you can practice both skills simultaneously.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 text-xs">
+          {[
+            { label: 'Basic Strategy', desc: 'Real-time feedback on every decision' },
+            { label: 'Card Counting', desc: 'Running count & true count display' },
+            { label: 'No Signup', desc: 'Free forever, no account required' },
+            { label: '6-Deck Shoe', desc: 'Realistic casino conditions' },
+          ].map(({ label, desc }) => (
+            <div key={label} className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
+              <div className="text-white font-semibold mb-0.5">{label}</div>
+              <div className="text-gray-500">{desc}</div>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <a href="/how-to-play-blackjack" className="text-blue-400 hover:text-blue-300">How to play blackjack →</a>
+          <a href="/blackjack-strategy-chart" className="text-blue-400 hover:text-blue-300">Strategy charts →</a>
+          <a href="/how-to-memorize-blackjack-strategy" className="text-blue-400 hover:text-blue-300">Memorize basic strategy →</a>
+          <a href="/how-to-count-cards" className="text-blue-400 hover:text-blue-300">How to count cards →</a>
+          <a href="/blackjack-house-edge-calculator" className="text-blue-400 hover:text-blue-300">House edge calculator →</a>
+        </div>
+      </div>
+    </section>
+    </>
   );
 }
 

@@ -66,6 +66,7 @@ export default function RootLayout({ children }) {
         <Analytics />
         <footer className="flex-none flex items-center justify-center gap-6 py-2 text-xs text-gray-700 bg-gray-950">
           <a href="/about" className="hover:text-gray-500 transition-colors">About</a>
+          <a href="/how-to-play-blackjack" className="hover:text-gray-500 transition-colors">How to Play</a>
           <a href="/blackjack-strategy-chart" className="hover:text-gray-500 transition-colors">Strategy Chart</a>
           <a href="/how-to-count-cards" className="hover:text-gray-500 transition-colors">Card Counting</a>
           <a href="/how-to-memorize-blackjack-strategy" className="hover:text-gray-500 transition-colors">Memorize Strategy</a>

@@ -31,6 +31,12 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
+      url: 'https://blackjackgto.com/how-to-play-blackjack',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: 'https://blackjackgto.com/how-to-memorize-blackjack-strategy',
       lastModified: new Date(),
       changeFrequency: 'monthly',

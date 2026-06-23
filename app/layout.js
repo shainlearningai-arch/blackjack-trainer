@@ -68,6 +68,8 @@ export default function RootLayout({ children }) {
           <a href="/about" className="hover:text-gray-500 transition-colors">About</a>
           <a href="/blackjack-strategy-chart" className="hover:text-gray-500 transition-colors">Strategy Chart</a>
           <a href="/how-to-count-cards" className="hover:text-gray-500 transition-colors">Card Counting</a>
+          <a href="/how-to-memorize-blackjack-strategy" className="hover:text-gray-500 transition-colors">Memorize Strategy</a>
+          <a href="/blackjack-house-edge-calculator" className="hover:text-gray-500 transition-colors">House Edge</a>
           <a href="/privacy-policy" className="hover:text-gray-500 transition-colors">Privacy Policy</a>
         </footer>
       </body>
